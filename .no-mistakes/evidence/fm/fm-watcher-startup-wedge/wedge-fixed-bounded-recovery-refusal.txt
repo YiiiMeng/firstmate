@@ -1,0 +1,10 @@
+# Scenario: live unreclaimable .wake-queue.lock holder - recovery transition must refuse
+# within FM_RECOVERY_LOCK_BOUND (3s here) and the EXIT trap must publish downtime and
+# release the watch lock. Pre-fix this hung forever with zero output (see base repro).
+
+=== watch.out (exit=1 elapsed=4s) ===
+watcher: recovery state could not be reopened safely; the cleanup trap publishes downtime and releases the watch lock
+=== watch lock after exit ===
+.watch.lock RELEASED (gone)
+=== downtime marker after exit ===
+pending:downtime:80986.1790722521.dbh7rJ

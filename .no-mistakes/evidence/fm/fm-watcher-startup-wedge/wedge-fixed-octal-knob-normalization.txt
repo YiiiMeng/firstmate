@@ -1,0 +1,7 @@
+# Scenario: base-10 knob normalization - FM_RECOVERY_LOCK_BOUND=08 /
+# FM_RECOVERY_TMP_STALE_AFTER=09 parse as decimal 8/9 instead of aborting bash
+# arithmetic ('value too great for base').
+
+bound=08 parsed as 8 ; stale-after=09 parsed as 9
+deadline arithmetic survived: 8
+octal-knob rc=0

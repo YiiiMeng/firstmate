@@ -1,0 +1,21 @@
+# Base commit (a774c44) reproduction of the live incident, same fixtures, same commands:
+# (1) arm-level: silent zero-output child, TERMed at the 10s confirmation timeout,
+#     ledger row reason=confirmation-timeout beacon_age=999999 - identical to the
+#     incident's .watch-cycle-exits.log rows.
+
+BASE arm exit=1 elapsed=11s
+--- arm.out ---
+/tmp/fm-base-wt/bin/fm-watch-arm.sh: line 545:  4568 Terminated: 15          "$WATCH" > "$child_out"
+watcher: FAILED - no live watcher with a fresh beacon
+--- cycle exits ledger ---
+arm_pid=4473	watcher_pid=4568	origin=started	started_at=1790722562	ended_at=1790722573	exit_code=143	signal=TERM	reason=confirmation-timeout	beacon_age=999999	lock_before=pid:none|identity:none	lock_after=pid:4568|identity:none	successor=none
+--- child output bytes: 155 ---
+/tmp/fm-base-wt/tests/lib.sh: line 179:  4328 Killed: 9               FM_STATE_OVERRIDE="$state" bash -c '. "$1" && fm_lock_try_acquire "$2" || exit 7; exec sleep 300' _ "$LIB" "$state/.wake-queue.lock" > /dev/null 2>&1
+
+# (2) watcher-level: unbounded hang with 0 output bytes, beacon MISSING, and after TERM
+#     the half-claimed lock is leaked (present with a now-dead pid).
+
+BASE: watcher STILL RUNNING after 15 s (unbounded wedge), output bytes: 0
+BASE: lock pid: 11127; beacon: MISSING
+BASE: after TERM: lock PRESENT-leaked; pid=11127
+/tmp/fm-base-wt/tests/lib.sh: line 179: 11044 Killed: 9               FM_STATE_OVERRIDE="$state" bash -c '. "$1" && fm_lock_try_acquire "$2" || exit 7; exec sleep 300' _ "$LIB" "$state/.wake-queue.lock" > /dev/null 2>&1

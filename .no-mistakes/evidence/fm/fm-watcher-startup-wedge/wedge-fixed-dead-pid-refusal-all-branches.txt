@@ -1,0 +1,11 @@
+# Scenario: honest dead-pid refusal across all three acquire branches (stale beat, no
+# beat, fresh beat). A live-held steal mutex blocks reclamation; the watcher must refuse
+# naming the dead pid + reason. Pre-fix (base): fresh-beat branch printed
+# 'already running pid <dead>' exit 0; no-beat branch printed 'lock held by live pid'.
+
+=== stale-beat (exit=1) ===
+watcher: stale lock names pid 999999 which is not running and could not be reclaimed (steal mutex could not be acquired or reaped); inspect /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.5ToDNC/refuse-stale-beat/state/.watch.lock and /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.5ToDNC/refuse-stale-beat/state/.watcher-down.lock before re-arming.
+=== no-beat (exit=1) ===
+watcher: stale lock names pid 999999 which is not running and could not be reclaimed (steal mutex could not be acquired or reaped); inspect /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.5ToDNC/refuse-no-beat/state/.watch.lock and /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.5ToDNC/refuse-no-beat/state/.watcher-down.lock before re-arming.
+=== fresh-beat (exit=1) ===
+watcher: stale lock names pid 999999 which is not running and could not be reclaimed (steal mutex could not be acquired or reaped); inspect /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.5ToDNC/refuse-fresh-beat/state/.watch.lock and /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.5ToDNC/refuse-fresh-beat/state/.watcher-down.lock before re-arming.

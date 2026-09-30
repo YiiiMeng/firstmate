@@ -1,0 +1,24 @@
+
+=== PROBE A: arm startup from the 2026-09-29 wedged state shape ===
+seeded wedge: dead pid 999999 holds .watch.lock/.watcher-down.lock/.wake-queue.lock; dangling .watch.lock.steal; acked:handling marker
+PASS: arm confirmed a started watcher from the wedged state
+watcher: started pid=3339 (beacon fresh)
+watcher pid from started line: 3339 (alive: yes)
+PASS: dangling steal mutex reclaimed
+PASS: .watch.lock.owner.WEDG01 collected
+PASS: .watcher-down.lock.owner.WEDG02 collected
+PASS: .wake-queue.lock.owner.WEDG03 collected
+
+=== PROBE B: dead-pid lock whose reclaim is refused -> honest typed refusal ===
+seeded: .watch.lock names dead pid 999999; .watcher-down.lock held live by pid 5775; no .last-watcher-beat
+watcher exit=1 after 11s (no beat file: the old code printed 'live pid ... but no heartbeat exists' or 'already running pid <dead>')
+watcher: stale lock names pid 999999 which is not running and could not be reclaimed (downtime publication refused within 10s (recovery marker lock contention)); inspect /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-live-wedge-probe.G4wVwA/probe-refusal/state/.watch.lock and /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-live-wedge-probe.G4wVwA/probe-refusal/state/.watcher-down.lock before re-arming.
+PASS: refusal names the dead pid and the reclaim reason, exits 1
+PASS: dead pid never described as live/running
+
+=== PROBE C: FM_RECOVERY_LOCK_BOUND=08 is parsed base-10 (octal corner) ===
+watcher exit=1 after 9s with FM_RECOVERY_LOCK_BOUND=08
+watcher: stale lock names pid 999999 which is not running and could not be reclaimed (downtime publication refused within 8s (recovery marker lock contention)); inspect /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-live-wedge-probe.G4wVwA/probe-octal/state/.watch.lock and /private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-live-wedge-probe.G4wVwA/probe-octal/state/.watcher-down.lock before re-arming.
+PASS: bound honored as decimal 8s, no arithmetic abort
+
+=== probe complete ===

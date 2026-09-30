@@ -1,0 +1,11 @@
+# Scenario: arm forked into the reproduced 2026-09-29 wedged startup state
+# state shape: stale .watch.lock/.watcher-down.lock/.wake-queue.lock symlinks naming dead
+# pids, dangling .watch.lock.steal mutex, acked:handling marker, leaked owner records,
+# aged quarantine dir, no beacon. Real bin/fm-watch-arm.sh via tests/ sandbox conventions.
+
+=== arm.out ===
+watcher: started pid=77273 (beacon fresh)
+=== state after (records) ===
+/private/var/folders/dl/ss70wk2x45b39_4pclg537_m0000gn/T/fm-wedge-e2e.CtHqjw/wedged-arm/state/.watcher-down
+=== beat ===
+beacon present

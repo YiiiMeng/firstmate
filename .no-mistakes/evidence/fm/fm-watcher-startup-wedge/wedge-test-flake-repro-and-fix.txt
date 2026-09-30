@@ -1,0 +1,36 @@
+# Flaky regression test found while validating: test_arm_starts_from_wedged_startup_state
+# failed 1-in-25 looped runs (and once in a full-suite run) with
+# "wedged-state started line did not name the confirmed watcher (lock '')".
+#
+# Reproduced diagnostic (looped run 20, load ~13):
+#   WEDGE-FLAKE lock=''
+#   armout=[watcher: started pid=41260 (beacon fresh)]
+#   state=[... .last-watcher-beat .watch-cycle-exits.log .watch-deliveries.log
+#          .watcher-down home-summary.json ...]
+#   lock-link=[gone]  arm-alive=[yes]  childouts=[check: rearm-resurface]
+#
+# Cause: the recovering watcher resurfaces on its first cycle (check:
+# rearm-resurface) and legitimately exits, releasing the lock through its
+# cleanup trap - the same lifecycle the pre-existing dead-pid row of
+# test_arm_starts_and_self_heals asserts. The new test read .watch.lock/pid
+# AFTER the arm's started line, racing that exit: under load the first cycle
+# can complete inside the window between the arm's confirm and the test's read.
+# The product behavior is the designed rearm-resurface flow; the test's read
+# was racy.
+#
+# Fix (tests/fm-watcher-lock.test.sh): take the pid from the started line itself
+# (which prints only after the pid-strict healthy check read it from the lock)
+# instead of from a lock the exited cycle may already have released.
+# Verification: 25/25 looped runs green after the fix (see testing_summary).
+#
+# Post-fix verification:
+#   - bash /tmp/fm-wedged-fixed-loop.sh 25  (fixed test extracted, looped): 25/25 PASS
+#   - full tests/fm-watcher-lock.test.sh with the fix, clean serial run: exit 0 (45/45)
+#
+# Suite results on this host (target commit 83a783b vs base a774c44):
+#   tests/fm-watcher-lock.test.sh   target GREEN (after flake fix above)
+#   tests/fm-omp-harness.test.sh    target GREEN (omp plugin constant change exercised)
+#   opencode plugin subset (17 tests extracted from tests/fm-pi-watch-extension.test.sh): 17/17 GREEN
+#   tests/fm-pi-watch-extension.test.sh  FAILS at test 6 IDENTICALLY at base and target
+#   tests/fm-wake-queue.test.sh     FAILS at test 4 IDENTICALLY at base and target
+#   -> both pre-existing environmental failures on this host, not caused by this change.

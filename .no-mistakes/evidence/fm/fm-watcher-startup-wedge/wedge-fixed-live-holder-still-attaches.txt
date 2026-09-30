@@ -1,0 +1,12 @@
+# Scenario: guard - a genuinely LIVE holder with a fresh beacon is still reported
+# 'already running'/attached (exit 0 semantics), never misread as a stale dead-pid lock.
+
+=== arm.out after attach window ===
+watcher: already running pid 94658
+watcher: attached pid=94658 (beacon 2s)
+=== lock pid vs live watcher pid: 94658 / 94658 ===
+ATTACHED to live holder: honest
+=== arm.out final (arm exit) ===
+watcher: already running pid 94658
+watcher: attached pid=94658 (beacon 2s)
+watcher: FAILED - cycle ended without an actionable reason

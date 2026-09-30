@@ -1,0 +1,9 @@
+# Scenario: watcher TERMed while sitting in the bounded recovery wait (the original
+# wedge mechanism: pre-fix TERM here leaked a half-claimed lock with no trap installed).
+
+watcher took the lock (pid=84122)
+=== watch.out (wait rc=143) ===
+=== watch lock after TERM ===
+.watch.lock RELEASED (gone)
+=== downtime marker after TERM ===
+pending:downtime:84122.1790722525.BQGt8m
